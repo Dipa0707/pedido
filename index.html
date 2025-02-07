@@ -9,7 +9,7 @@
 
         body {
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -17,7 +17,7 @@
             background: #000;
             font-family: 'Montserrat', sans-serif;
             position: relative;
-            overflow-x: hidden;
+            overflow: hidden;  /* Previne scroll */
         }
 
         .stars {
@@ -46,29 +46,121 @@
 
         /* Ajustes para mobile */
         @media screen and (max-width: 768px) {
-            .stars {
-                background: radial-gradient(circle at top, rgba(255,255,255,0.3) 0%, transparent 60%),
-                           radial-gradient(circle at bottom, rgba(255,105,180,0.2) 0%, transparent 60%);
+            body {
+                padding: 0;
             }
-            
-            .star {
-                width: 2px !important;
-                height: 2px !important;
+
+            .container {
+                padding: 15px;
+                width: 95%;
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                margin: 1rem 0;
+            }
+
+            .heart {
+                font-size: 40px;
+            }
+
+            .message {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                padding: 15px;
+                margin: 1rem 0;
+            }
+
+            .countdown {
+                font-size: 0.9rem;
+                margin: 1rem 0;
+            }
+
+            .question h2 {
+                font-size: 1.1rem;
+                padding: 15px;
+                margin: 1rem 0;
+            }
+
+            .buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                font-size: 1.1rem;
+            }
+
+            .final-message {
+                font-size: 1.1rem;
+                padding: 20px;
+                margin: 1rem 0;
+            }
+
+            .floating-hearts {
+                pointer-events: none;
+            }
+        }
+
+        /* Prevenir zoom em inputs em iOS */
+        @media screen and (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px;
+            }
+        }
+
+        /* Ajustes para telas muito pequenas */
+        @media screen and (max-width: 320px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .message, .question h2, .final-message {
+                font-size: 1rem;
+            }
+
+            .heart {
+                font-size: 30px;
+            }
+        }
+
+        /* Prevenir seleção de texto */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Fixar a orientação vertical */
+        @media screen and (orientation: landscape) {
+            .container {
+                max-height: 85vh;
+                overflow-y: auto;
             }
         }
 
         .container {
             text-align: center;
             background: rgba(0, 0, 0, 0.6);
-            padding: 3rem;
-            margin: 20px auto;
+            padding: 20px;
+            margin: 0 auto;
             border-radius: 20px;
             box-shadow: 0 0 30px rgba(255, 105, 180, 0.3);
             backdrop-filter: blur(10px);
+            width: 90%;
             max-width: 700px;
             position: relative;
             z-index: 1;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
         .heart-bg {
@@ -268,36 +360,7 @@
 
         /* Música */
         .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(255, 105, 180, 0.2);
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            transition: all 0.3s;
-        }
-
-        .music-control:hover {
-            transform: scale(1.1);
-            background: rgba(255, 105, 180, 0.4);
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px #fff, 
-                           0 0 20px #fff, 
-                           0 0 30px #ff69b4,
-                           0 0 40px #ff69b4;
-            }
-            to {
-                text-shadow: 0 0 20px #fff,
-                           0 0 30px #ff4da6,
-                           0 0 40px #ff4da6,
-                           0 0 50px #ff4da6;
-            }
+            display: none;
         }
     </style>
 </head>
@@ -349,11 +412,6 @@
             Te amo mucho.
         </div>
     </div>
-
-    <div class="music-control" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-    </audio>
 
     <script>
         // Criar estrelas
@@ -411,22 +469,6 @@
             document.getElementById('seconds').textContent = seconds;
         }
 
-        // Controle de música
-        let isMusicPlaying = false;
-        function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            if (isMusicPlaying) {
-                music.pause();
-                isMusicPlaying = false;
-            } else {
-                music.play();
-                isMusicPlaying = true;
-            }
-        }
-
-        // Iniciar corações flutuantes
-        setInterval(createFloatingHearts, 500);
-
         function sayYes() {
             // Remove o texto inicial e o contador
             document.querySelector('.message').style.display = 'none';
@@ -461,6 +503,19 @@
 
         // Inicializar
         updateCountdown();
+
+        // Adicionar ao JavaScript
+        // Prevenir zoom em dispositivos móveis
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevenir zoom com gestos
+        document.addEventListener('gesturestart', function(event) {
+            event.preventDefault();
+        });
     </script>
 </body>
 </html> 
