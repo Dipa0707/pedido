@@ -371,8 +371,11 @@
         <div class="heart-bg"></div>
         <div class="heart">❤️</div>
         <h1>Mi amor...</h1>
-        <div class="countdown">
-            Faltan <span id="days">0</span> días, <span id="hours">0</span> horas, <span id="minutes">0</span> minutos y <span id="seconds">0</span> segundos para San Valentín
+        <div class="countdown" id="countdown">
+            Faltan <span id="days">00</span> días, 
+            <span id="hours">00</span> horas, 
+            <span id="minutes">00</span> minutos y 
+            <span id="seconds">00</span> segundos para San Valentín
         </div>
         <div class="message">
             Desde que entraste en mi vida, descubrí que la felicidad está en los pequeños detalles.<br><br>
@@ -446,27 +449,36 @@
             heart.addEventListener('animationend', () => heart.remove());
         }
 
-        // Contador regressivo
-        function updateCountdown() {
-            const valentinesDay = new Date('2025-02-14T00:00:00');  // Próximo San Valentín
-            const now = new Date();
-            const diff = valentinesDay - now;
+        // Função para formatar números com zero à esquerda
+        function padZero(num) {
+            return num < 10 ? `0${num}` : num;
+        }
 
-            // Se já passou do dia 14 de fevereiro de 2024, ajusta para 2025
-            if (diff < 0) {
-                valentinesDay.setFullYear(2025);
-                diff = valentinesDay - now;
+        // Função para calcular e atualizar o contador
+        function updateCountdown() {
+            // Data do próximo Dia dos Namorados
+            const now = new Date();
+            let targetDate = new Date(2024, 1, 14); // Mês é 1 para fevereiro (0-11)
+
+            // Se já passou do Dia dos Namorados de 2024, usar 2025
+            if (now > targetDate) {
+                targetDate = new Date(2025, 1, 14);
             }
 
+            // Calcula a diferença
+            const diff = targetDate - now;
+
+            // Converte para dias, horas, minutos e segundos
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            document.getElementById('days').textContent = days;
-            document.getElementById('hours').textContent = hours;
-            document.getElementById('minutes').textContent = minutes;
-            document.getElementById('seconds').textContent = seconds;
+            // Atualiza os elementos na página
+            document.getElementById('days').textContent = padZero(days);
+            document.getElementById('hours').textContent = padZero(hours);
+            document.getElementById('minutes').textContent = padZero(minutes);
+            document.getElementById('seconds').textContent = padZero(seconds);
         }
 
         function sayYes() {
@@ -516,6 +528,12 @@
         document.addEventListener('gesturestart', function(event) {
             event.preventDefault();
         });
+
+        // Atualiza imediatamente e depois a cada segundo
+        const timer = setInterval(updateCountdown, 1000);
+
+        // Limpa o intervalo quando a página é fechada
+        window.addEventListener('unload', () => clearInterval(timer));
     </script>
 </body>
 </html> 
